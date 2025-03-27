@@ -85,7 +85,7 @@ bool is_valid_position(int row, int col) {
     // 1. Verifique se a posição está dentro dos limites do labirinto
     //    (row >= 0 && row < num_rows && col >= 0 && col < num_cols)
     if(row >= 0 && row < num_rows && col >= 0 && col < num_cols){
-        if (maze[row][col] == 'x' || maze[row][col] == '.') {// Verifica se a posição é um caminho válido
+        if (maze[row][col] == 'x') {// Verifica se a posição é um caminho válido
             return true;
         }
         
@@ -101,51 +101,53 @@ bool is_valid_position(int row, int col) {
 bool walk(Position pos) {
     // TODO: Implemente a lógica de navegação aqui
     // 1. Marque a posição atual como visitada (maze[pos.row][pos.col] = '.')
-    maze[pos.row][pos.col] = '.';
+    maze[pos.row][pos.col] = 'o';
     
     // 2. Chame print_maze() para mostrar o estado atual do labirinto
     // 3. Adicione um pequeno atraso para visualização:
     print_maze();
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    maze[pos.row][pos.col] = '.';
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     // 4. Verifique se a posição atual é a saída (maze[pos.row][pos.col] == 's')
         
     if(maze[pos.row][pos.col]=='s') {
         return true;
-    } //    Se for, retorne true
+    } else {
+        //    Se for, retorne true
         // 5. Verifique as posições adjacentes (cima, baixo, esquerda, direita)
         //    Para cada posição adjacente:
-    std::vector<Position> directions = {
-        {pos.row - 1, pos.col}, // Cima
-        {pos.row + 1, pos.col}, // Baixo
-        {pos.row, pos.col - 1}, // Esquerda
-        {pos.row, pos.col + 1}  // Direita
-    };
+        std::vector<Position> directions = {
+            {pos.row - 1, pos.col}, // Cima
+            {pos.row + 1, pos.col}, // Baixo
+            {pos.row, pos.col - 1}, // Esquerda
+            {pos.row, pos.col + 1}  // Direita
+        };
 
-    for (const auto& next_pos : directions) {
-        if (is_valid_position(next_pos.row, next_pos.col)) {
-            valid_positions.push(next_pos);
+        for (const auto& next_pos : directions) {
+            if (is_valid_position(next_pos.row, next_pos.col)) {
+                valid_positions.push(next_pos);
+            }
         }
-    }
-    // a. Se for uma posição válida (use is_valid_position()), adicione-a à pilha valid_positions
-    while (!valid_positions.empty()) {
-        Position next = valid_positions.top();
-        valid_positions.pop();
+        // a. Se for uma posição válida (use is_valid_position()), adicione-a à pilha valid_positions
+        while (!valid_positions.empty()) {
+            Position next = valid_positions.top();
+            valid_positions.pop();
 
-        if (walk(next)) {
-            return true;
+            if (walk(next)) {
+                return true;
+            }
         }
-    }
 
-    maze[pos.row][pos.col] = 'x';
-    return false;
+        maze[pos.row][pos.col] = '.';
 
-    // 6. Enquanto houver posições válidas na pilha (!valid_positions.empty()):
-    //    a. Remova a próxima posição da pilha (valid_positions.top() e valid_positions.pop())
-    //    b. Chame walk recursivamente para esta posição
-    //    c. Se walk retornar true, propague o retorno (retorne true)
-    // 7. Se todas as posições foram exploradas sem encontrar a saída, retorne false
+        // 6. Enquanto houver posições válidas na pilha (!valid_positions.empty()):
+        //    a. Remova a próxima posição da pilha (valid_positions.top() e valid_positions.pop())
+        //    b. Chame walk recursivamente para esta posição
+        //    c. Se walk retornar true, propague o retorno (retorne true)
+        // 7. Se todas as posições foram exploradas sem encontrar a saída, retorne false
     
-    return false; // Placeholder - substitua pela lógica correta
+        return false; // Placeholder - substitua pela lógica correta
+    }
 }
 
 
