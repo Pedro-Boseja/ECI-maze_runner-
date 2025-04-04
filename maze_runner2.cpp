@@ -89,6 +89,8 @@ void walk(Position pos) {
         return;
     }
 
+    char original = maze[pos.row][pos.col];
+
     // Protege a atualização do labirinto
     {
         lock_guard<mutex> lock(maze_mutex);
@@ -96,6 +98,12 @@ void walk(Position pos) {
     }
 
     print_maze();  // Mostra o estado atual do labirinto
+
+    // this_thread::sleep_for(chrono::milliseconds(50));
+    
+    if (original == 'x' || original == 'e') {
+        maze[pos.row][pos.col] = '.';
+    }
 
     vector<Position> directions = {
         {pos.row - 1, pos.col},
